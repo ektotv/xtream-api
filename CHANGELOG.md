@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-10-06)
+
+@iptv/xtream-api 1.4.1 (patch)
+
+#### :bug: Bug Fix
+* `@iptv/xtream-api`
+  * [#30](https://github.com/ektotv/xtream-api/pull/30) refactor(xtream): allow fallback extension when user profile is undefined ([@valiums00](https://github.com/valiums00))
+
+#### Committers: 1
+- [@valiums00](https://github.com/valiums00)
+
 ## Release (2025-09-09)
 
 @iptv/xtream-api 1.4.0 (minor)
