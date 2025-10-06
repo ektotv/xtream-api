@@ -268,11 +268,15 @@ export class Xtream<T extends CustomSerializers = CustomSerializers> {
       }
 
       // Check if requested format is allowed for the user
-      // Fall back to first allowed format if not
-      if (!this.userProfile!.allowed_output_formats.includes(stream.extension)) {
-        format = this.userProfile!.allowed_output_formats[0];
+      // If not, fall back to first allowed format for the user
+      // Otherwise, if no allowed formats are specified, fall back to requested format
+      // Some services may return empty objects for userProfile
+      if (
+        !this.userProfile?.allowed_output_formats.includes(stream.extension)
+      ) {
+        format =
+          this.userProfile?.allowed_output_formats[0] ?? stream.extension;
       }
-
       return `${this.baseUrl}/live/${this.#username}/${this.#password}/${stream.streamId}.${format}`;
     }
 

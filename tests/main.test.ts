@@ -264,6 +264,56 @@ describe('Xtream API', () => {
 
     expect(url).toBe('http://example.com/timeshift/test/password/60/2021-01-01:00-00/1.ts');
   });
+
+  test('Falls back to requested extension when userProfile has empty allowed_output_formats', async () => {
+    const xtream = new Xtream({
+      url: 'http://example.com',
+      username: 'test',
+      password: 'password',
+    });
+
+    // Set userProfile with empty allowed_output_formats array
+    xtream.userProfile = {
+      username: 'test',
+      password: 'password',
+      message: '',
+      auth: 1,
+      status: 'Active',
+      exp_date: '1767542400',
+      is_trial: '0',
+      active_cons: 0,
+      created_at: '1735084800',
+      max_connections: '5',
+      allowed_output_formats: [],
+    };
+
+    const url = xtream.generateStreamUrl({
+      type: 'channel',
+      streamId: '123',
+      extension: 'm3u8',
+    });
+
+    expect(url).toBe('http://example.com/live/test/password/123.m3u8');
+  });
+
+  test('Falls back to requested extension when userProfile is undefined', () => {
+    const xtream = new Xtream({
+      url: 'http://example.com',
+      username: 'test',
+      password: 'password',
+    });
+
+    // Ensure userProfile is undefined
+    xtream.userProfile = undefined;
+
+    const url = xtream.generateStreamUrl({
+      type: 'channel',
+      streamId: '456',
+      extension: 'ts',
+    });
+
+    expect(url).toBe('http://example.com/live/test/password/456.ts');
+  });
 });
 
 describe('JSON:API serializer', () => {
