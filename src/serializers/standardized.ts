@@ -143,7 +143,7 @@ export const standardizedSerializer = defineSerializers('Standardized', {
       country,
       informationUrl: kinopoiskUrl,
       originalName: oName,
-      cover: backdropPath[0],
+      cover: backdropPath?.[0],
       poster: movieImage,
       duration: durationSecs,
       durationFormatted: duration,
@@ -196,7 +196,7 @@ export const standardizedSerializer = defineSerializers('Standardized', {
         genre: genre?.split(',').map((x) => x.trim()) ?? [],
         voteAverage: Number(rating),
         poster: cover,
-        cover: backdropPath[0],
+        cover: backdropPath?.[0],
         duration: Number(episodeRunTime) * 60,
         releaseDate: releaseDate ? new Date(releaseDate) : null,
         updatedAt: new Date(Number(lastModified) * 1000),
@@ -308,7 +308,7 @@ export const standardizedSerializer = defineSerializers('Standardized', {
       plot,
       voteAverage: Number(rating),
       poster: cover,
-      cover: backdropPath[0],
+      cover: backdropPath?.[0],
       duration: Number(episodeRunTime) * 60,
       cast: cast?.split(',').map((x) => x.trim()) ?? [],
       director: director?.split(',').map((x) => x.trim()) ?? [],
@@ -499,7 +499,7 @@ export type StandardXtreamMovieListing = {
   /** The date when the movie was added to the system */
   createdAt: Date;
   /** All category IDs the movie belongs to */
-  categoryIds?: string[];
+  categoryIds: string[];
   /** URL to access the stream */
   url?: string;
 };
