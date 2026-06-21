@@ -1,6 +1,11 @@
 import camelCaseKeys, { CamelCaseKeys } from 'camelcase-keys';
 import { defineSerializers } from '../xtream.ts';
-import type { XtreamAudioInfo, XtreamCategory, XtreamSeason, XtreamVideoInfo } from '../types.ts';
+import type {
+  XtreamAudioInfo,
+  XtreamCategory,
+  XtreamSeason,
+  XtreamVideoInfo,
+} from '../types.ts';
 
 /**
  * JSON API serializers for the Xtream API
@@ -10,7 +15,14 @@ import type { XtreamAudioInfo, XtreamCategory, XtreamSeason, XtreamVideoInfo } f
  */
 export const JSONAPISerializer = defineSerializers('JSON:API', {
   profile: (input): { data: JSONAPIXtreamProfile } => {
-    const { auth, expDate, maxConnections, activeCons, createdAt, ...camelInput } = camelCaseKeys(input);
+    const {
+      auth,
+      expDate,
+      maxConnections,
+      activeCons,
+      createdAt,
+      ...camelInput
+    } = camelCaseKeys(input);
 
     return {
       data: {
@@ -60,8 +72,18 @@ export const JSONAPISerializer = defineSerializers('JSON:API', {
 
     return {
       data: camelInput.map((channel) => {
-        const { added, num, streamId, categoryIds, streamIcon, epgChannelId, tvArchive, name, tvArchiveDuration, url } =
-          channel;
+        const {
+          added,
+          num,
+          streamId,
+          categoryIds,
+          streamIcon,
+          epgChannelId,
+          tvArchive,
+          name,
+          tvArchiveDuration,
+          url,
+        } = channel;
 
         return {
           type: 'channel',
@@ -184,7 +206,7 @@ export const JSONAPISerializer = defineSerializers('JSON:API', {
           description,
           plot,
           informationUrl: kinopoiskUrl,
-          cover: backdropPath[0],
+          cover: backdropPath?.[0],
           poster: movieImage,
           duration: durationSecs,
           durationFormatted: duration,
@@ -252,7 +274,7 @@ export const JSONAPISerializer = defineSerializers('JSON:API', {
             genre: genre?.split(',').map((x) => x.trim()) ?? [],
             voteAverage: Number(rating),
             poster: cover,
-            cover: backdropPath[0],
+            cover: backdropPath?.[0],
             duration: Number(episodeRunTime) * 60,
             youtubeId: youtubeTrailer,
             releaseDate: releaseDate ? new Date(releaseDate) : null,
@@ -306,46 +328,62 @@ export const JSONAPISerializer = defineSerializers('JSON:API', {
 
     const flatEpisodes = Object.values(episodes).flat();
 
-    const episodesAsJSONAPI: JSONAPIXtreamEpisode[] = flatEpisodes.map((episode) => {
-      const { id, season, title, subtitles, url, episodeNum, added, info } = episode;
+    const episodesAsJSONAPI: JSONAPIXtreamEpisode[] = flatEpisodes.map(
+      (episode) => {
+        const { id, season, title, subtitles, url, episodeNum, added, info } =
+          episode;
 
-      const { releaseDate, rating, movieImage, coverBig, durationSecs, duration, tmdbId, plot, video, audio, bitrate } =
-        info;
-
-      const seasonId = seasons.find((x) => x.seasonNumber === season)?.id.toString() || season.toString();
-
-      return {
-        type: 'episode',
-        id,
-        attributes: {
-          number: Number(episodeNum),
-          title,
+        const {
+          releaseDate,
+          rating,
+          movieImage,
+          coverBig,
+          durationSecs,
+          duration,
+          tmdbId,
           plot,
-          tmdbId: tmdbId?.toString(),
-          poster: movieImage,
-          cover: coverBig,
-          voteAverage: Number(rating),
-          duration: durationSecs,
-          durationFormatted: duration,
-          releaseDate: releaseDate ? new Date(releaseDate) : null,
-          createdAt: new Date(Number(added) * 1000),
-          subtitles,
-          url,
           video,
           audio,
           bitrate,
-        },
-        relationships: {
-          season: {
-            data: { type: 'season', id: seasonId },
-          },
+        } = info;
 
-          show: {
-            data: { type: 'show', id: seriesId.toString() },
+        const seasonId =
+          seasons.find((x) => x.seasonNumber === season)?.id.toString() ||
+          season.toString();
+
+        return {
+          type: 'episode',
+          id,
+          attributes: {
+            number: Number(episodeNum),
+            title,
+            plot,
+            tmdbId: tmdbId?.toString(),
+            poster: movieImage,
+            cover: coverBig,
+            voteAverage: Number(rating),
+            duration: durationSecs,
+            durationFormatted: duration,
+            releaseDate: releaseDate ? new Date(releaseDate) : null,
+            createdAt: new Date(Number(added) * 1000),
+            subtitles,
+            url,
+            video,
+            audio,
+            bitrate,
           },
-        },
-      } satisfies JSONAPIXtreamEpisode;
-    });
+          relationships: {
+            season: {
+              data: { type: 'season', id: seasonId },
+            },
+
+            show: {
+              data: { type: 'show', id: seriesId.toString() },
+            },
+          },
+        } satisfies JSONAPIXtreamEpisode;
+      },
+    );
 
     let seasonsToMap = seasons;
     if (seasonsToMap.length === 0) {
@@ -367,33 +405,36 @@ export const JSONAPISerializer = defineSerializers('JSON:API', {
       });
     }
 
-    const seasonsAsJSONAPI: JSONAPIXtreamSeason[] = seasonsToMap.map((season) => {
-      const { id, seasonNumber, cover, coverBig, airDate, ...restSeason } = season;
+    const seasonsAsJSONAPI: JSONAPIXtreamSeason[] = seasonsToMap.map(
+      (season) => {
+        const { id, seasonNumber, cover, coverBig, airDate, ...restSeason } =
+          season;
 
-      return {
-        type: 'season',
-        id: id.toString(),
-        attributes: {
-          ...restSeason,
-          releaseDate: airDate ? new Date(airDate) : null,
-          number: seasonNumber,
-          cover: coverBig,
-        },
-        relationships: {
-          show: {
-            data: { type: 'show', id: seriesId.toString() },
+        return {
+          type: 'season',
+          id: id.toString(),
+          attributes: {
+            ...restSeason,
+            releaseDate: airDate ? new Date(airDate) : null,
+            number: seasonNumber,
+            cover: coverBig,
           },
-          episodes: {
-            data: flatEpisodes
-              .filter((episode) => episode.season === seasonNumber)
-              .map((episode) => ({
-                type: 'episode',
-                id: episode.id.toString(),
-              })),
+          relationships: {
+            show: {
+              data: { type: 'show', id: seriesId.toString() },
+            },
+            episodes: {
+              data: flatEpisodes
+                .filter((episode) => episode.season === seasonNumber)
+                .map((episode) => ({
+                  type: 'episode',
+                  id: episode.id.toString(),
+                })),
+            },
           },
-        },
-      } satisfies JSONAPIXtreamSeason;
-    });
+        } satisfies JSONAPIXtreamSeason;
+      },
+    );
 
     return {
       data: {
@@ -404,7 +445,7 @@ export const JSONAPISerializer = defineSerializers('JSON:API', {
           plot,
           voteAverage: Number(rating),
           poster: cover,
-          cover: backdropPath[0],
+          cover: backdropPath?.[0],
           duration: Number(episodeRunTime) * 60,
           cast: cast?.split(',').map((x) => x.trim()) ?? [],
           director: director?.split(',').map((x) => x.trim()) ?? [],
@@ -443,7 +484,8 @@ export const JSONAPISerializer = defineSerializers('JSON:API', {
 
     return {
       data: epgListings.map((listing) => {
-        const { id, channelId, lang, start, end, title, description, epgId } = listing;
+        const { id, channelId, lang, start, end, title, description, epgId } =
+          listing;
 
         return {
           type: 'epg-listing',
@@ -474,7 +516,18 @@ export const JSONAPISerializer = defineSerializers('JSON:API', {
 
     return {
       data: epgListings.map((listing) => {
-        const { id, channelId, start, end, title, description, nowPlaying, hasArchive, lang, epgId } = listing;
+        const {
+          id,
+          channelId,
+          start,
+          end,
+          title,
+          description,
+          nowPlaying,
+          hasArchive,
+          lang,
+          epgId,
+        } = listing;
 
         return {
           type: 'epg-listing',
