@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-06-21)
+
+@iptv/xtream-api 1.4.2 (patch)
+
+#### :bug: Bug Fix
+* `@iptv/xtream-api`
+  * [#33](https://github.com/ektotv/xtream-api/pull/33) handles when backdropPath is null ([@evoactivity](https://github.com/evoactivity))
+
+#### Committers: 1
+- Liam ([@evoactivity](https://github.com/evoactivity))
+
 ## Release (2025-10-06)
 
 @iptv/xtream-api 1.4.1 (patch)
