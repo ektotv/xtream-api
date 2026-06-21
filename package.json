@@ -1,6 +1,6 @@
 {
   "name": "@iptv/xtream-api",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Standardized access to Xtream compatible player API",
   "keywords": [
     "xtream",
